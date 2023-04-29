@@ -5,8 +5,8 @@ export default class Pixabay{
         this.apiKey = apiKey;
     }
 
-    async search(q) {
-        let url = `https://pixabay.com/api/?key=${this.apiKey}&q=${q}&image_type=photo&orientation=horizontal&safesearch=true`;
+    async search(q, page = 1) {
+        let url = `https://pixabay.com/api/?key=${this.apiKey}&q=${q}&page=${page}&per_page=40&image_type=photo&orientation=horizontal&safesearch=true`;
         let res = await fetch(url);
 
         if (res.status !== 200) {

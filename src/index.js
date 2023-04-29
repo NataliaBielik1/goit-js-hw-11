@@ -6,15 +6,33 @@ const pixabay = new Pixabay(API_KEY);
 const form = document.querySelector("form");
 const getSearchString = () => form.querySelector("input").value;
 const gallery = document.querySelector(".gallery");
+const loadMore = document.querySelector(".load-more");
 
-const onSumbit = async e => {
+let page = 1;
+
+const hideLoadMore = () => loadMore.style.display = 'none';
+const showLoadMore = () => loadMore.style.display = 'inline';
+
+const onSubmit = async e => {
   e.preventDefault();
-  console.log(pixabay);
-  const images = await pixabay.search(getSearchString());
-  gallery.innerHTML = "";
-
-  gallery.innerHTML = images.map(i => renderImageCard(i)).join("");
+  page = 1;
+  findAndRender();
 };
+
+const findImages = async () => pixabay.search(getSearchString(), page);
+const clearGallery = () => gallery.innerHTML = "";
+const renderGallery = images => gallery.innerHTML = images.map(i => renderImageCard(i)).join("");
+const findAndRender = async () => {
+  const images = await findImages();
+  clearGallery();
+  renderGallery(images);
+  showLoadMore();
+};
+
+const onLoadMore = () => {
+  page++;
+  findAndRender();
+}
 
 const renderImageCard = i => {
   return `
@@ -38,4 +56,6 @@ const renderImageCard = i => {
   `;
 };
 
-form.onsubmit = onSumbit;
+hideLoadMore();
+form.onsubmit = onSubmit;
+loadMore.onclick = onLoadMore;
