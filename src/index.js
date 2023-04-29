@@ -6,35 +6,37 @@ const pixabay = new Pixabay(API_KEY);
 const form = document.querySelector("form");
 const getSearchString = () => form.querySelector("input").value;
 const gallery = document.querySelector(".gallery");
-const loadMore = document.querySelector(".load-more");
+const loadMoreBtn = document.querySelector(".load-more");
 
 let page = 1;
 
-const hideLoadMore = () => loadMore.style.display = 'none';
-const showLoadMore = () => loadMore.style.display = 'inline';
+const hideLoadMore = () => loadMoreBtn.style.display = 'none';
+const showLoadMore = () => loadMoreBtn.style.display = 'inline';
 
 const onSubmit = async e => {
   e.preventDefault();
   page = 1;
-  findAndRender();
+  clearGallery();
+  loadMore();
 };
 
 const findImages = async () => pixabay.search(getSearchString(), page);
 const clearGallery = () => gallery.innerHTML = "";
-const renderGallery = images => gallery.innerHTML = images.map(i => renderImageCard(i)).join("");
-const findAndRender = async () => {
+const addToGallery = images => gallery.insertAdjacentHTML('beforeend', renderImages(images));
+const loadMore = async () => {
   const images = await findImages();
-  clearGallery();
-  renderGallery(images);
+  addToGallery(images);
   showLoadMore();
 };
 
 const onLoadMore = () => {
   page++;
-  findAndRender();
+  loadMore();
 }
 
-const renderImageCard = i => {
+const renderImages = images => images.map(i => renderImage(i)).join("");
+
+const renderImage = i => {
   return `
     <div class="photo-card">
       <img src="${i.webformatURL}" alt="${i.tags}" loading="lazy" />
@@ -58,4 +60,4 @@ const renderImageCard = i => {
 
 hideLoadMore();
 form.onsubmit = onSubmit;
-loadMore.onclick = onLoadMore;
+loadMoreBtn.onclick = onLoadMore;
