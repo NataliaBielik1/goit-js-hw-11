@@ -1,6 +1,6 @@
 import "./css/styles.css";
 import { Notify } from "notiflix";
-const axios = require('axios').default;
+const axios = require("axios").default;
 const API_KEY = "35895618-9d514dded583d246a91a253e5";
 const form = document.querySelector("form");
 const getSearchString = () => form.querySelector("input").value;
@@ -12,30 +12,33 @@ const per_page = 40;
 let loadedImagesNum = 0;
 let limit = 0;
 
-const hideLoadMore = () => loadMoreBtn.style.display = 'none';
-const showLoadMore = () => loadMoreBtn.style.display = 'inline';
+const showLoadMoreOnDemand = () => loadedImagesNum > 0 && showLoadMore();
+const hideLoadMore = () => (loadMoreBtn.style.display = "none");
+const showLoadMore = () => (loadMoreBtn.style.display = "inline");
 
 const onSubmit = async e => {
   e.preventDefault();
+  hideLoadMore();
+  clearGallery();
   page = 1;
   loadedImagesNum = 0;
-  clearGallery();
-  loadMore();
+  addToGallery((await findImages()));
+  showLoadMoreOnDemand();
 };
 
 const findImages = async () => search(getSearchString());
-const clearGallery = () => gallery.innerHTML = "";
-const addToGallery = images => gallery.insertAdjacentHTML('beforeend', renderImages(images));
+const clearGallery = () => (gallery.innerHTML = "");
+const addToGallery = images =>
+  gallery.insertAdjacentHTML("beforeend", renderImages(images));
 const loadMore = async () => {
-  const images = await findImages();
-  addToGallery(images);
+  addToGallery((await findImages()));
   showLoadMore();
 };
 
 const onLoadMore = () => {
   page++;
   loadMore();
-}
+};
 
 const renderImages = images => images.map(i => renderImage(i)).join("");
 
@@ -61,9 +64,11 @@ const renderImage = i => {
   `;
 };
 
-const search = async (q) => {
+const search = async q => {
   if (limit > 0 && loadedImagesNum + per_page > limit) {
-    Notify.failure("We're sorry, but you've reached the end of search results.");
+    Notify.failure(
+      "We're sorry, but you've reached the end of search results."
+    );
     hideLoadMore();
     return [];
   }
@@ -72,15 +77,20 @@ const search = async (q) => {
   let res = await axios.get(url);
 
   if (res.status !== 200) {
-      return [];
+    return [];
   }
-  
-  limit = res.data.totalHits
+
+  limit = res.data.totalHits;
+
+  if (res.data.hits.length === 0) {
+    Notify.failure("Sorry, there are no images matching your search query. Please try again.");
+    return [];
+  }
 
   loadedImagesNum += res.data.hits.length;
 
   return res.data.hits;
-}
+};
 
 hideLoadMore();
 form.onsubmit = onSubmit;
