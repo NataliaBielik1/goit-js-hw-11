@@ -1,8 +1,8 @@
 import "./css/styles.css";
 import Pixabay from "./js/pixabay";
-//const axios = require('axios/dist/browser/axios.cjs'); // browser
+const axios = require('axios').default;
 const API_KEY = "35895618-9d514dded583d246a91a253e5";
-const pixabay = new Pixabay(API_KEY);
+const pixabay = new Pixabay(API_KEY, axios);
 const form = document.querySelector("form");
 const getSearchString = () => form.querySelector("input").value;
 const gallery = document.querySelector(".gallery");
