@@ -1,0 +1,20 @@
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.photo-card {
+    /* height: 200px; */
+    display: block;
+    margin: 15px;
+}
+
+.photo-card img {
+    height: 200px;
+    display: block;
+}
+
+.photo-card .info {
+    display: flex;
+    justify-content: space-between;
+}
