@@ -95,7 +95,6 @@ const search = async q => {
   let res = await axios.get(url);
   limit = res.data.totalHits;
   loadedImagesNum += res.data.hits.length;
-  console.log(res, limit, loadedImagesNum);
 
   if (res.data.hits.length === 0) {
     throw new Error(errors.NOW_RESULTS);
