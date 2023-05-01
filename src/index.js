@@ -3,7 +3,7 @@ import { Notify } from "notiflix";
 const axios = require("axios").default;
 const API_KEY = "35895618-9d514dded583d246a91a253e5";
 const form = document.querySelector("form");
-const getSearchString = () => form.querySelector("input").value;
+const getSearchString = () => form.querySelector("input").value.trim();
 const gallery = document.querySelector(".gallery");
 const loadMoreBtn = document.querySelector(".load-more");
 
@@ -18,6 +18,9 @@ const showLoadMore = () => (loadMoreBtn.style.display = "inline");
 
 const onSubmit = async e => {
   e.preventDefault();
+  if (getSearchString() === '') {
+    return;
+  }
   hideLoadMore();
   clearGallery();
   page = 1;
